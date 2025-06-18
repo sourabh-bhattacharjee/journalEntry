@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Component
@@ -22,8 +23,8 @@ public class JournalEntryService {
         return journalEntryRepository.findAll();
     }
 
-    public JournalEntry findById(ObjectId id) {
-        return journalEntryRepository.findById(id).orElse(null);
+    public Optional<JournalEntry> findById(ObjectId id) {
+        return journalEntryRepository.findById(id);
     }
     public List<JournalEntry> deleteEntry(ObjectId id) {
          journalEntryRepository.deleteById(id);
