@@ -33,7 +33,6 @@ public class JournalEntryService {
     public JournalEntry updateEntry(ObjectId id, JournalEntry journalEntry) {
         return journalEntryRepository.save(journalEntry);
     }
-
 }
 
 

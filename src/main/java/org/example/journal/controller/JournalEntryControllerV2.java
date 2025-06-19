@@ -20,8 +20,9 @@ public class JournalEntryControllerV2 {
     private JournalEntryService journalEntryService;
 
     @GetMapping
-    public List<JournalEntry> getAll(){
-        return journalEntryService.findAll();
+    public ResponseEntity<List<JournalEntry>> getAll(){
+        return new ResponseEntity<>(journalEntryService.findAll(), HttpStatus.OK);
+        //return journalEntryService.findAll();
     }
 
     @PostMapping
@@ -49,7 +50,7 @@ public class JournalEntryControllerV2 {
     @DeleteMapping("/id/{id}")
     public ResponseEntity<?> deleteJournalEntry(@PathVariable ObjectId id){
          journalEntryService.deleteEntry(id);
-         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
