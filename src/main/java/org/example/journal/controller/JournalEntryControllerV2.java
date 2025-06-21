@@ -8,6 +8,7 @@ import org.example.journal.service.UserEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,20 +38,25 @@ public class JournalEntryControllerV2 {
     }
 
     @PostMapping("/{userName}")
+    @Transactional // transactional tells spring framework that either this code works together or it will abort.
     public ResponseEntity<JournalEntry> createJournalEntry(@RequestBody JournalEntry journalEntry, @PathVariable String userName) {
         try{
             Users user = userEntryService.findByuserName(userName);
-            JournalEntry entry =  journalEntryService.saveEntry(journalEntry);
-            ObjectId id = entry.getId();
-            List<JournalEntry> journalEntries = user.getJournalEntries();
-            if(user != null) {
-                journalEntries.add(entry);
-                user.setJournalEntries(journalEntries);
-                userEntryService.save(user);
+            if (user == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(journalEntry, HttpStatus.CREATED);
+            JournalEntry entry =  journalEntryService.saveEntry(journalEntry);
+            List<JournalEntry> journalEntries = user.getJournalEntries();
+            if (journalEntries == null) {
+                journalEntries = new ArrayList<>();
+            }
+            journalEntries.add(entry);
+            user.setJournalEntries(journalEntries);
+            userEntryService.save(user);
+            return new ResponseEntity<>(entry, HttpStatus.CREATED);
         }
         catch(Exception e){
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
